@@ -15,19 +15,13 @@
 */
 
 /**
- * Comments should be present at the beginning of each procedure and class.
- * Great to have comments before crucial code sections within the procedure.
-*/
-
-/**
  * Define Global Variables
  * 
 */
 
 // get all sections
-
-var sections = document.querySelectorAll("section");
-var navList = document.querySelector("#navbar__list");
+let sections = document.querySelectorAll("section");
+let navList = document.querySelector("#navbar__list");
 
 
 /**
@@ -36,19 +30,32 @@ var navList = document.querySelector("#navbar__list");
  * 
 */
 
-function isElementInViewPort(element)
-{
+// check if section is in viewport.
+function isElementInViewPort(element) {
     const rect = element.getBoundingClientRect();
-    const safeArea = window.innerHeight * 0.5;    
-    
+    // safety margin.
+    const safeArea = window.innerHeight * 0.5;
+
     return (
-        rect.top+safeArea >= 0 &&
-        rect.left+safeArea >= 0 &&
+        rect.top + safeArea >= 0 &&
+        rect.left + safeArea >= 0 &&
         rect.bottom - safeArea <= (window.innerHeight || document.documentElement.clientHeight) &&
         rect.right - safeArea <= (window.innerWidth || document.documentElement.clientWidth)
     );
 }
 
+// scroll to section called on nav item click.
+function scrollToSection(e) {
+    // prevent default behaviour of link
+    e.preventDefault();
+
+    let section = this.getAttribute("href");
+
+    document.querySelector(section).scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
 
 /**
  * End Helper Functions
@@ -58,34 +65,53 @@ function isElementInViewPort(element)
 
 // build the nav
 
+// create fragment to store nav items.
 let fragment = document.createDocumentFragment();
 
+// loop through sections and create nav items
 sections.forEach(element => {
     let navItem = document.createElement("li");
     let link = document.createElement("a");
 
-    navItem.className="navbar__menu";
-    link.className = "menu__link";
+    navItem.className = "navbar__menu";
+    link.classList.add("menu__link");
+
     link.setAttribute("href", "#" + element.id);
+
     link.textContent = element.dataset.nav;
 
+    // add event listener to link
+    link.addEventListener("click", scrollToSection);
+
     navItem.appendChild(link);
-    fragment.append(navItem);   
+    fragment.append(navItem);
 });
+
+// append fragment to navList
 navList.appendChild(fragment);
 
 
 
 //Add class 'active' to section when near top of viewport
 
-window.addEventListener('scroll', function() {
+window.addEventListener('scroll', function () {
+    let activeSection;
     sections.forEach(element => {
-        if(isElementInViewPort(element)){
-        element.classList.add("your-active-class");
-        }
-        else{
+        if (element.classList.contains("your-active-class")) {
             element.classList.remove("your-active-class");
         }
-    }
-    )
+        if (document.querySelector(`a[href='#${element.id}']`).classList.contains("active__link")) {
+            // Removing active class from the previous nav link
+            document.querySelector(`a[href='#${element.id}']`).classList.remove("active__link");
+        }
+
+        if (isElementInViewPort(element)) {
+            activeSection = element;
+        }
+    });
+
+    // Apply active class to the current section in the viewport.
+    activeSection.classList.add("your-active-class");
+    // Applying active class to the current nav link
+    document.querySelector(`a[href='#${activeSection.id}']`).classList.add("active__link");
 });

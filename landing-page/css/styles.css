@@ -85,10 +85,19 @@ section {
     color: #000;
 }
 
-.navbar__menu .menu__link:hover {
-    background: #333;
+@media  (hover: hover)  {
+    .navbar__menu .menu__link:hover {
+        background: #333;
+        color: #fff;
+        transition: ease 0.3s all;
+    }
+} 
+
+
+/* active: highlight nav item */
+.active__link {
+    background: steelblue;
     color: #fff;
-    transition: ease 0.3s all;
 }
 
 /* Header Styles */
