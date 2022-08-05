@@ -29,6 +29,7 @@ function onGenerateClicked() {
     // check that all entries are valid
     if (validiteEntries()) {
         // get weather data from the openweather API
+        zipCode = zipCodeEntry.value;
         getWeatherData(baseURL, zipCode, apiKey, units).then(function (data) {
             // then make a POST request to add it to the local server
             postData("/addData", createWeatherObject(newDate, data, feelingsEntry.value));
